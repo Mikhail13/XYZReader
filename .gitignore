@@ -1,0 +1,8 @@
+.gradle
+.idea
+build
+gradle.properties
+local.properties
+xyzreader.iml
+XYZReader/build
+XYZReader/XYZReader.iml
