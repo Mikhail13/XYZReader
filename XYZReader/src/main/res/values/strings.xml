@@ -8,5 +8,6 @@
     <string name="action_share">Share</string>
 
     <string name="up">Up</string>
+    <string name="subtitle_text">{0} by {1}</string>
 
 </resources>
