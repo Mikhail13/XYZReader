@@ -1,8 +1,13 @@
 <resources>
     <!-- list -->
-    <dimen name="list_side_margin">16dp</dimen>
+    <dimen name="list_side_margin">8dp</dimen>
+    <dimen name="list_recycler_padding">8dp</dimen>
     <dimen name="list_toolbar_side_margin">0dp</dimen>
     <integer name="list_column_count">2</integer>
+    <dimen name="list_image_width">120dp</dimen>
+    <dimen name="list_image_margin_left">16dp</dimen>
+    <dimen name="list_subtitle_padding_top">4dp</dimen>
+    <dimen name="list_title_margin">16dp</dimen>
 
     <!-- detail -->
     <bool name="detail_is_card">false</bool>

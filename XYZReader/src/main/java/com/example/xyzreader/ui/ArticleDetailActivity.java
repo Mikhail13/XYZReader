@@ -8,9 +8,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.OnApplyWindowInsetsListener;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.WindowInsetsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
+import android.view.View;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
@@ -52,6 +56,25 @@ public class ArticleDetailActivity extends AppCompatActivity
                     mCursor.moveToPosition(position);
                 }
                 mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
+            }
+        });
+
+        ViewCompat.setOnApplyWindowInsetsListener(mPager, new OnApplyWindowInsetsListener() {
+            @Override
+            public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+                insets = ViewCompat.onApplyWindowInsets(v, insets);
+                if (insets.isConsumed()) {
+                    return insets;
+                }
+
+                boolean consumed = false;
+                for (int i = 0, count = mPager.getChildCount(); i < count; i++) {
+                    ViewCompat.dispatchApplyWindowInsets(mPager.getChildAt(i), insets);
+                    if (insets.isConsumed()) {
+                        consumed = true;
+                    }
+                }
+                return consumed ? insets.consumeSystemWindowInsets() : insets;
             }
         });
 
