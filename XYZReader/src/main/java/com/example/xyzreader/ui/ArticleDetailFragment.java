@@ -128,14 +128,12 @@ public class ArticleDetailFragment extends Fragment implements
         TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
         TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
-        bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
 
         if (mCursor != null) {
             mRootView.setAlpha(0);
             mRootView.setVisibility(View.VISIBLE);
             mRootView.animate().alpha(1);
             String titleText = mCursor.getString(ArticleLoader.Query.TITLE);
-            Log.d(TAG, "Title [" + titleText + "]");
             titleView.setText(titleText);
             if (mSupportActionBar != null) {
                 mSupportActionBar.setTitle(titleText);
