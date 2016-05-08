@@ -29,8 +29,6 @@ public class ArticleDetailActivity extends AppCompatActivity
     private Cursor mCursor;
     private long mStartId;
 
-    private long mSelectedItemId;
-
     private ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
 
@@ -43,45 +41,45 @@ public class ArticleDetailActivity extends AppCompatActivity
 
         mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.pager);
-        mPager.setAdapter(mPagerAdapter);
-        mPager.setPageMargin((int) TypedValue
-                .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
-        mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
+        if (mPager != null) {
+            mPager.setAdapter(mPagerAdapter);
+            mPager.setPageMargin((int) TypedValue
+                    .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
+            mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
 
-        mPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            mPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 
-            @Override
-            public void onPageSelected(int position) {
-                if (mCursor != null) {
-                    mCursor.moveToPosition(position);
-                }
-                mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
-            }
-        });
-
-        ViewCompat.setOnApplyWindowInsetsListener(mPager, new OnApplyWindowInsetsListener() {
-            @Override
-            public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
-                insets = ViewCompat.onApplyWindowInsets(v, insets);
-                if (insets.isConsumed()) {
-                    return insets;
-                }
-
-                boolean consumed = false;
-                for (int i = 0, count = mPager.getChildCount(); i < count; i++) {
-                    ViewCompat.dispatchApplyWindowInsets(mPager.getChildAt(i), insets);
-                    if (insets.isConsumed()) {
-                        consumed = true;
+                @Override
+                public void onPageSelected(int position) {
+                    if (mCursor != null) {
+                        mCursor.moveToPosition(position);
                     }
                 }
-                return consumed ? insets.consumeSystemWindowInsets() : insets;
-            }
-        });
+            });
+
+            ViewCompat.setOnApplyWindowInsetsListener(mPager, new OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+                    insets = ViewCompat.onApplyWindowInsets(v, insets);
+                    if (insets.isConsumed()) {
+                        return insets;
+                    }
+
+                    boolean consumed = false;
+                    for (int i = 0, count = mPager.getChildCount(); i < count; i++) {
+                        ViewCompat.dispatchApplyWindowInsets(mPager.getChildAt(i), insets);
+                        if (insets.isConsumed()) {
+                            consumed = true;
+                        }
+                    }
+                    return consumed ? insets.consumeSystemWindowInsets() : insets;
+                }
+            });
+        }
 
         if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().getData() != null) {
                 mStartId = ItemsContract.Items.getItemId(getIntent().getData());
-                mSelectedItemId = mStartId;
             }
         }
     }
@@ -99,15 +97,16 @@ public class ArticleDetailActivity extends AppCompatActivity
         // Select the start ID
         if (mStartId > 0) {
             mCursor.moveToFirst();
-            // TODO: optimize
-            while (!mCursor.isAfterLast()) {
+
+            // Optimized the loop with one less call (mCursor.isAfterLast())
+            do {
                 if (mCursor.getLong(ArticleLoader.Query._ID) == mStartId) {
                     final int position = mCursor.getPosition();
                     mPager.setCurrentItem(position, false);
                     break;
                 }
-                mCursor.moveToNext();
-            }
+            } while (mCursor.moveToNext());
+
             mStartId = 0;
         }
     }

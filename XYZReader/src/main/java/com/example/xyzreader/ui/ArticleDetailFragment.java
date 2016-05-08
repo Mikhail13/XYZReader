@@ -11,6 +11,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -43,8 +44,8 @@ public class ArticleDetailFragment extends Fragment implements
     private View mRootView;
 
     private ImageView mPhotoView;
-    private boolean mIsCard = false;
     private Toolbar mToolbar;
+    private ActionBar mSupportActionBar;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -69,7 +70,6 @@ public class ArticleDetailFragment extends Fragment implements
             mItemId = getArguments().getLong(ARG_ITEM_ID);
         }
 
-        mIsCard = getResources().getBoolean(R.bool.detail_is_card);
         setHasOptionsMenu(true);
     }
 
@@ -90,8 +90,12 @@ public class ArticleDetailFragment extends Fragment implements
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
 
         mToolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(mToolbar);
+        mSupportActionBar = activity.getSupportActionBar();
+        if (mSupportActionBar != null) {
+            mSupportActionBar.setDisplayHomeAsUpEnabled(true);
+        }
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,20 +120,6 @@ public class ArticleDetailFragment extends Fragment implements
         return mRootView;
     }
 
-    static float progress(float v, float min, float max) {
-        return constrain((v - min) / (max - min), 0, 1);
-    }
-
-    static float constrain(float val, float min, float max) {
-        if (val < min) {
-            return min;
-        } else if (val > max) {
-            return max;
-        } else {
-            return val;
-        }
-    }
-
     private void bindViews() {
         if (mRootView == null) {
             return;
@@ -145,8 +135,11 @@ public class ArticleDetailFragment extends Fragment implements
             mRootView.setVisibility(View.VISIBLE);
             mRootView.animate().alpha(1);
             String titleText = mCursor.getString(ArticleLoader.Query.TITLE);
+            Log.d(TAG, "Title [" + titleText + "]");
             titleView.setText(titleText);
-            mToolbar.setTitle(titleText);
+            if (mSupportActionBar != null) {
+                mSupportActionBar.setTitle(titleText);
+            }
             bylineView.setText(Html.fromHtml(
                     DateUtils.getRelativeTimeSpanString(
                             mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
